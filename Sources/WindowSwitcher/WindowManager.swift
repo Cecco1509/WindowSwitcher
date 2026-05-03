@@ -2,7 +2,15 @@ import CoreGraphics
 import Foundation
 
 class WindowManager {
-    
+
+    // hardcoded list of bundle IDs to ignore (e.g. screenshot thumbnails)
+    private let ignoredBundleIDs: Set<String> = [
+        "com.apple.Screenshot",
+        "com.apple.dock",
+        "com.apple.controlcenter",
+        "com.apple.screencaptureui",
+    ]
+
     func getWindowsSortedHorizontally() -> [Window] {
         let rawWindows = fetchRawWindows()
         let windows = rawWindows.compactMap { parseWindow($0) }
@@ -21,8 +29,12 @@ class WindowManager {
             return []
         }
 
-        // Filter out windows that are invisible
         return windowList
+    }
+
+    // helper to get bundle ID for a given PID, prints the PID and bundle ID for debugging
+    private func bundleID(forPID pid: pid_t) -> String? {
+        NSRunningApplication(processIdentifier: pid)?.bundleIdentifier
     }
 
     private func parseWindow(_ dict: [String: AnyObject]) -> Window? {
@@ -36,15 +48,9 @@ class WindowManager {
             return nil
         }
 
-        guard let appName = dict[kCGWindowOwnerName as String] as? String else {
+        guard let bid = bundleID(forPID: pid), !ignoredBundleIDs.contains(bid) else {
             return nil
         }
-
-        if appName.isEmpty || appName == "Screenshot" {
-            return nil
-        }
-
-        log("appName: \(appName) | ID: \(windowID) | PID: \(pid)")
 
         // extract the frame
         guard let boundsDict = dict[kCGWindowBounds as String] as? [String: CGFloat],
