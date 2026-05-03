@@ -1,0 +1,3 @@
+#import <ApplicationServices/ApplicationServices.h>
+
+extern AXError _AXUIElementGetWindow(AXUIElementRef element, CGWindowID *idOut);
