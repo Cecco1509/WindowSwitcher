@@ -18,6 +18,7 @@ Once it is removed repeat the **First install** instructions.
 
 # Future steps
 
+- Make tests
 - Make this an app
 - Make a menu bar icon
 
