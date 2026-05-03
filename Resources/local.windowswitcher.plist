@@ -7,7 +7,7 @@
 
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/lorenzoceccotti/bin/WindowSwitcher</string>
+			<string>BINARY_PATH_PLACEHOLDER</string>
     </array>
 
     <key>RunAtLoad</key>
