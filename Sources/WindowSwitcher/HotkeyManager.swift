@@ -1,6 +1,7 @@
 import CoreGraphics
 import Foundation
 import ApplicationServices
+import AppKit
 
 class HotkeyManager {
     
@@ -77,7 +78,7 @@ class HotkeyManager {
     
     private func moveFocus(direction: Direction) {
         var windows: [Window]
-        
+
         switch direction {
         case .left, .right:
             windows = windowManager.getWindowsSortedHorizontally()
@@ -86,41 +87,27 @@ class HotkeyManager {
         }
 
         guard let focused = focusedWindow(in: windows) else { return }
-        
-        // Add filtering for windows that have the same Y coordinate (for horizontal) or X coordinate (for vertical) as the focused windows
-        windows = windows.filter { window in
-            switch direction {
-            case .left, .right:
-                return abs(window.frame.minX - focused.frame.minX) != 0
-            case .up, .down:
-                return abs(window.frame.minY - focused.frame.minY) != 0
-            }
-        }
-        
-        if windows.isEmpty {
-            return
-        }
 
-        if windows.count == 1 {
-            focusManager.focusWindow(windows[0])
-            return
-        }
+        let isHorizontal = direction == .left || direction == .right
 
-        // Search for the index of the nearest window in the specified direction
-        var nearestWindowIndex: Int = 0
-        switch direction {
-        case .left:
-            nearestWindowIndex = windows.enumerated().min(by: { abs($0.element.frame.midY - focused.frame.midY) < abs($1.element.frame.midY - focused.frame.midY) })?.offset ?? 0
-        case .right:
-            nearestWindowIndex = windows.enumerated().min(by: { abs($0.element.frame.midY - focused.frame.midY) < abs($1.element.frame.midY - focused.frame.midY ) })?.offset ?? 0
-        case .up:
-            nearestWindowIndex = windows.enumerated().min(by: { abs($0.element.frame.midX - focused.frame.midX) < abs($1.element.frame.midX - focused.frame.midX ) })?.offset ?? 0
-        case .down:
-            nearestWindowIndex = windows.enumerated().min(by: { abs($0.element.frame.midX - focused.frame.midX) < abs($1.element.frame.midX - focused.frame.midX ) })?.offset ?? 0
-        }
+        // filter out windows on the same axis as focused
+        windows = windows.filter { $0.windowID != focused.windowID }
 
-        focusManager.focusWindow(windows[nearestWindowIndex])
-    }
+        guard !windows.isEmpty else { return }
+
+        // find nearest window perpendicular to movement direction
+        guard let nearest = windows.min(by: {
+            let distA = isHorizontal
+                ? abs($0.frame.midY - focused.frame.midY)
+                : abs($0.frame.midX - focused.frame.midX)
+            let distB = isHorizontal
+                ? abs($1.frame.midY - focused.frame.midY)
+                : abs($1.frame.midX - focused.frame.midX)
+            return distA < distB
+        }) else { return }
+
+        focusManager.focusWindow(nearest)
+    } 
     
     private func focusedWindow(in windows: [Window]) -> Window? {
         guard let frontApp = NSWorkspace.shared.frontmostApplication else { return nil }

@@ -3,7 +3,7 @@ import Foundation
 
 class WindowManager {
 
-    // hardcoded list of bundle IDs to ignore (e.g. screenshot thumbnails)
+    // hardcoded list of bundle IDs to ignore    
     private let ignoredBundleIDs: Set<String> = [
         "com.apple.Screenshot",
         "com.apple.dock",
@@ -11,16 +11,16 @@ class WindowManager {
         "com.apple.screencaptureui",
     ]
 
+    private func getWindows() -> [Window] {
+        return fetchRawWindows().compactMap { parseWindow($0) }
+    }
+
     func getWindowsSortedHorizontally() -> [Window] {
-        let rawWindows = fetchRawWindows()
-        let windows = rawWindows.compactMap { parseWindow($0) }
-        return windows.sorted { $0.frame.minX < $1.frame.minX }
+        return getWindows().sorted { $0.frame.minX < $1.frame.minX }
     }
 
     func getWindowsSortedVertically() -> [Window] {
-        let rawWindows = fetchRawWindows()
-        let windows = rawWindows.compactMap { parseWindow($0) }
-        return windows.sorted { $0.frame.minY < $1.frame.minY }
+        return getWindows().sorted { $0.frame.minY < $1.frame.minY }
     }
 
     private func fetchRawWindows() -> [[String: AnyObject]] {
