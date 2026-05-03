@@ -33,7 +33,11 @@ Run the install script:
 ```
 
 Once installed, grant Accessibility permission to the binary:
-> System Settings → Privacy & Security → Accessibility → add `WindowSwitcher` and enable it
+> System Settings → Privacy & Security → Accessibility → `WindowSwitcher`
+
+Also enable it as a background element in:
+> System Settings → Login Items and Extensions → Background Elements → `WindowSwitcher`
+
 
 Then reload the daemon to pick up the permission:
 
@@ -43,8 +47,25 @@ Then reload the daemon to pick up the permission:
 
 ## Updating
 
-1. Remove `WindowSwitcher` from System Settings → Privacy & Security → Accessibility
-2. Follow the [Installation](#installation) steps again
+**!!! Follow the steps in order**
+
+1. Disable `WindowSwitcher` from Login Items -> Background elements
+2. Remove `WindowSwitcher` from System Settings → Privacy & Security → Accessibility
+3. Follow the [Installation](#installation) steps again
+
+If you didn't follow the order you have to do step one with only the mouse, since keyboard input is temporary blocked. Once step one is done you'll regain the keyboard.
+
+
+## Uninstall
+
+Run the uninstall script:
+
+```bash
+./uninstall.sh
+```
+Delete WindowSwitcher from the System Settings (the order isn't relevant):
+- System Settings → Login Items and Extensions → Background elements
+- System Settings → Privacy & Security → Accessibility 
 
 ## Roadmap
 
