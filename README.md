@@ -1,28 +1,55 @@
-# MacOS window manager
+# WindowSwitcher
 
-It is a deamon that binds to ctrl+opt+arrow to jump from the focused window on another based on the direction specified. After the jump it puts the pointer in the center of the selected window.
+A lightweight macOS daemon that lets you navigate between tiled windows using the keyboard. Jumps focus in the direction you specify and moves the pointer to the center of the newly focused window.
 
-# First install
+https://github.com/user-attachments/assets/e5ea53eb-0a65-4b71-8e44-7fc52abd152f
 
-Execute the following command before doing anything else
-> chmod u+x *.sh
+## Keybindings
 
-Use *install.sh* to first setup the deamon. After the deamon is installed you need to allow it in the "Privacy -> Accessibility" setting page.
+| Shortcut | Action |
+|---|---|
+| `Ctrl + Option + ←` | Focus window to the left |
+| `Ctrl + Option + →` | Focus window to the right |
+| `Ctrl + Option + ↑` | Focus window above |
+| `Ctrl + Option + ↓` | Focus window below |
 
-Once it is installed you need to restart the deamon using the script *reload.sh*
+## Requirements
 
-# Update
+- macOS 13 (Ventura) or later
+- Swift 6 or later
 
-To install a new version you need to delete the Deamon from "Privacy -> Accessibility" settings.
+## Installation
 
-Once it is removed repeat the **First install** instructions.
+Make the scripts executable:
 
+```bash
+chmod u+x *.sh
+```
 
+Run the install script:
 
-# Future steps
+```bash
+./install.sh
+```
 
-- Make tests
-- Make this an app
-- Make a menu bar icon
+Once installed, grant Accessibility permission to the binary:
+> System Settings → Privacy & Security → Accessibility → add `WindowSwitcher` and enable it
 
+Then reload the daemon to pick up the permission:
+
+```bash
+./reload.sh
+```
+
+## Updating
+
+1. Remove `WindowSwitcher` from System Settings → Privacy & Security → Accessibility
+2. Follow the [Installation](#installation) steps again
+
+## Roadmap
+
+- [ ] Tests
+- [ ] Menu bar icon with status indicator
+- [ ] Wrap into a distributable macOS app
+- [ ] Make the keybindings customizable
 
