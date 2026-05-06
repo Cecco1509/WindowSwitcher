@@ -16,7 +16,8 @@ class HotkeyManager {
     
     func start() {
 
-        let isTrusted = AXIsProcessTrusted()
+        let options = ["AXTrustedCheckOptionPrompt": true] as CFDictionary
+        let isTrusted = AXIsProcessTrustedWithOptions(options)
         log("Accessibility permission granted: \(isTrusted)")
 
         if !isTrusted {
