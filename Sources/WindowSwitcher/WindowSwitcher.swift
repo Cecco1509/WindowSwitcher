@@ -12,9 +12,11 @@ struct WindowSwitcher {
             CFRunLoopStop(CFRunLoopGetCurrent())
         }
 
+        let config = WindowSwitcherConfig.load()
+
         let windowManager = WindowManager()
         let focusManager = FocusManager()
-        let hotkeyManager = HotkeyManager(windowManager: windowManager, focusManager: focusManager)
+        let hotkeyManager = HotkeyManager(windowManager: windowManager, focusManager: focusManager, config: config)
 
         log("Starting WindowSwitcher...")
 

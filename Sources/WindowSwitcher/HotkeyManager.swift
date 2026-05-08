@@ -8,10 +8,12 @@ class HotkeyManager {
     private let windowManager: WindowManager
     private let focusManager: FocusManager
     private var eventTap: CFMachPort?
+    private let config: WindowSwitcherConfig
     
-    init(windowManager: WindowManager, focusManager: FocusManager) {
+    init(windowManager: WindowManager, focusManager: FocusManager, config: WindowSwitcherConfig) {
         self.windowManager = windowManager
         self.focusManager = focusManager
+        self.config = config
     }
     
     func start() {
@@ -53,23 +55,22 @@ class HotkeyManager {
         let flags = event.flags
         let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
         
-        let isControlOption = flags.contains(.maskControl) && flags.contains(.maskAlternate)
-        
-        guard isControlOption else {
+        let allModifiersPressed = config.modifiers.allSatisfy { flags.contains($0.cgEventFlag) } 
+        guard allModifiersPressed else {
             return Unmanaged.passUnretained(event)
         }
-        
+    
         switch keyCode {
-        case 123: // left arrow
+        case Int64(config.keys.left.cgKeyCode): 
             moveFocus(direction: .left)
             return nil
-        case 124: // right arrow
+        case Int64(config.keys.right.cgKeyCode):
             moveFocus(direction: .right)
             return nil
-        case 125: // down arrow
+        case Int64(config.keys.down.cgKeyCode):
             moveFocus(direction: .down)
             return nil
-        case 126: // up arrow
+        case Int64(config.keys.up.cgKeyCode):
             moveFocus(direction: .up)
             return nil
         default:

@@ -21,6 +21,12 @@ if [ $? -ne 0 ]; then
 		exit 1
 fi
 
+mkdir -p "$HOME/.config/WindowSwitcher"
+if [ ! -f "$HOME/.config/WindowSwitcher/config.toml" ]; then
+    cp ./Resources/config.toml "$HOME/.config/WindowSwitcher/config.toml"
+    echo "Default config installed at ~/.config/WindowSwitcher/config.toml"
+fi
+
 # Generate the plist with the correct binary path
 sed "s|BINARY_PATH_PLACEHOLDER|$BINARY_PATH|g" ./Resources/local.windowswitcher.plist > "$PLIST_DEST"
 
