@@ -6,12 +6,15 @@ https://github.com/user-attachments/assets/e5ea53eb-0a65-4b71-8e44-7fc52abd152f
 
 ## Keybindings
 
+The following options are the default ones but they are customizable under ~/.config/WindowSwitcher/config.toml
+
 | Shortcut | Action |
 |---|---|
 | `Ctrl + Option + ←` | Focus window to the left |
 | `Ctrl + Option + →` | Focus window to the right |
 | `Ctrl + Option + ↑` | Focus window above |
 | `Ctrl + Option + ↓` | Focus window below |
+
 
 ## Requirements
 
