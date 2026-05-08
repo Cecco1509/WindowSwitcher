@@ -13,3 +13,7 @@ left = "leftArrow"
 right = "rightArrow"
 up = "upArrow"
 down = "downArrow"
+
+[behavior]
+# If true, navigating past the last window wraps around to the first (pacman effect)
+pacman = true
