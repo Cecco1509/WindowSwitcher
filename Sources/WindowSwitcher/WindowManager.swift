@@ -61,6 +61,9 @@ class WindowManager {
             return nil
         }
 
+        // print the widow ID and window frame for debugging
+        log("Window ID: \(windowID), PID: \(pid), Bundle ID: \(bid), Frame: \(x), \(y), \(width), \(height)")
+
         let frame = CGRect(x: x, y: y, width: width, height: height)
 
         // filter out small/irrelevant windows

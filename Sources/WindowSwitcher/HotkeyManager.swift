@@ -79,37 +79,68 @@ class HotkeyManager {
     }
     
     private func moveFocus(direction: Direction) {
-        var windows: [Window]
+        let windows = direction == .left || direction == .right
+            ? windowManager.getWindowsSortedHorizontally()
+            : windowManager.getWindowsSortedVertically() 
 
-        switch direction {
-        case .left, .right:
-            windows = windowManager.getWindowsSortedHorizontally()
-        case .up, .down:
-            windows = windowManager.getWindowsSortedVertically()
-        }
-
+        guard windows.count > 1 else { return }
         guard let focused = focusedWindow(in: windows) else { return }
 
-        let isHorizontal = direction == .left || direction == .right
+        let candidates: [Window]
+            switch direction {
+            case .left:
+                candidates = windows.filter { $0.frame.midX < focused.frame.midX }
+            case .right:
+                candidates = windows.filter { $0.frame.midX > focused.frame.midX }
+            case .up:
+                candidates = windows.filter {
+                    $0.frame.midY < focused.frame.midY &&
+                    $0.frame.maxX > focused.frame.minX &&
+                    $0.frame.minX < focused.frame.maxX
+                }
+            case .down:
+                candidates = windows.filter {
+                    $0.frame.midY > focused.frame.midY &&
+                    $0.frame.maxX > focused.frame.minX &&
+                    $0.frame.minX < focused.frame.maxX
+                }
+            } 
 
-        // filter out windows on the same axis as focused
-        windows = windows.filter { $0.windowID != focused.windowID }
+        // pacman effect — wrap around if no candidates in that direction
+        let targetPool: [Window]
+        if candidates.isEmpty {
+            guard config.pacman else { return }
+            // wrap: reverse direction gives all other windows
+            targetPool = windows.filter { $0.windowID != focused.windowID }
+        } else {
+            targetPool = candidates
+        }
 
-        guard !windows.isEmpty else { return }
-
-        // find nearest window perpendicular to movement direction
-        guard let nearest = windows.min(by: {
-            let distA = isHorizontal
-                ? abs($0.frame.midY - focused.frame.midY)
-                : abs($0.frame.midX - focused.frame.midX)
-            let distB = isHorizontal
-                ? abs($1.frame.midY - focused.frame.midY)
-                : abs($1.frame.midX - focused.frame.midX)
-            return distA < distB
-        }) else { return }
-
+        guard let nearest = targetPool.min(by: {
+            let isHorizontal = direction == .left || direction == .right
+            
+            let primaryDistA = isHorizontal
+                ? abs($0.frame.midX - focused.frame.midX)
+                : abs($0.frame.midY - focused.frame.midY)
+            let primaryDistB = isHorizontal
+                ? abs($1.frame.midX - focused.frame.midX)
+                : abs($1.frame.midY - focused.frame.midY)
+            
+            // if same primary distance, use perpendicular as tiebreaker
+            if primaryDistA == primaryDistB {
+                let perpDistA = isHorizontal
+                    ? abs($0.frame.midY - focused.frame.midY)
+                    : abs($0.frame.midX - focused.frame.midX)
+                let perpDistB = isHorizontal
+                    ? abs($1.frame.midY - focused.frame.midY)
+                    : abs($1.frame.midX - focused.frame.midX)
+                return perpDistA < perpDistB
+            }
+            
+            return primaryDistA < primaryDistB
+        }) else { return } 
         focusManager.focusWindow(nearest)
-    } 
+    }
     
     private func focusedWindow(in windows: [Window]) -> Window? {
         guard let frontApp = NSWorkspace.shared.frontmostApplication else { return nil }

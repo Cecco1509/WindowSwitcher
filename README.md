@@ -72,8 +72,8 @@ Delete WindowSwitcher from the System Settings (the order isn't relevant):
 
 ## Roadmap
 
-- [ ] Make the keybindings customizable
-- [ ] Extend to multiple displays
+- [x] Make the keybindings customizable
+- [x] Extend to multiple displays
 - [ ] Wrap into a distributable macOS app
 - [ ] Menu bar icon with status indicator
 

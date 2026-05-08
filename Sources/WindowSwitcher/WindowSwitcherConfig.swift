@@ -4,6 +4,7 @@ import TOMLKit
 struct WindowSwitcherConfig {
     let modifiers: [ModifierKey]
     let keys: DirectionalKeys
+    let pacman: Bool
 
     struct DirectionalKeys {
         let left: KeyCode
@@ -19,7 +20,8 @@ struct WindowSwitcherConfig {
             right: .rightArrow,
             up: .upArrow,
             down: .downArrow
-        )
+        ),
+        pacman: true
     )
 
     static func load() -> WindowSwitcherConfig {
@@ -45,11 +47,13 @@ struct WindowSwitcherConfig {
             let right  = keysTable?["right"]?.string.flatMap  { KeyCode(rawValue: $0) } ?? defaultConfig.keys.right
             let up     = keysTable?["up"]?.string.flatMap     { KeyCode(rawValue: $0) } ?? defaultConfig.keys.up
             let down   = keysTable?["down"]?.string.flatMap   { KeyCode(rawValue: $0) } ?? defaultConfig.keys.down
+            let pacman = table["behavior"]?["pacman"]?.bool ?? defaultConfig.pacman
 
             log("Config loaded from \(configPath.path)")
             return WindowSwitcherConfig(
                 modifiers: modifiers,
-                keys: DirectionalKeys(left: left, right: right, up: up, down: down)
+                keys: DirectionalKeys(left: left, right: right, up: up, down: down),
+                pacman: pacman
             )
         } catch {
             log("Failed to parse config: \(error) — using defaults")
